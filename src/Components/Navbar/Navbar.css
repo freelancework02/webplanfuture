@@ -1,0 +1,100 @@
+/* Theme tokens (tweak to match your palette) */
+:root {
+  --wp-bg-top: rgba(255, 255, 255, 0.6);
+  --wp-bg-scrolled: rgba(255, 255, 255, 0.98);
+  --wp-text: #0f172a; /* slate-900 */
+  --wp-muted: #475569; /* slate-600 */
+  --wp-accent: #1a69c7;
+  --wp-underline: rgba(26, 105, 199, 0.22);
+}
+
+/* Header surfaces */
+.navbar-root--light {
+  color: var(--wp-text);
+  -webkit-backdrop-filter: saturate(150%) blur(2px);
+  backdrop-filter: saturate(150%) blur(2px);
+}
+
+.navbar--top {
+  background: var(--wp-bg-top);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.navbar--scrolled {
+  background: var(--wp-bg-scrolled);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Drawer surface */
+.drawer-surface--light {
+  background: #ffffff;
+}
+
+/* Logo sizing */
+.logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 200ms ease, height 200ms ease, opacity 200ms ease;
+}
+.logo--lg { height: 80px; }
+.logo--sm { height: 70px; transform: translateY(-1px); }
+
+/* Wordmark */
+.brand-wordmark--dark {
+  color: var(--wp-text);
+  font-weight: 600;
+}
+
+/* Links */
+.nav-link--light {
+  color: var(--wp-muted);
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+  position: relative;
+}
+.nav-link--light:hover {
+  color: var(--wp-text);
+}
+.nav-link--active {
+  color: var(--wp-text);
+  font-weight: 600;
+}
+
+/* Underline (desktop) */
+.nav-underline--light {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: transparent;
+  border-radius: 999px;
+  transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+  opacity: 0;
+  transform: scaleX(0.6);
+}
+.nav-link--light:hover .nav-underline--light {
+  background: var(--wp-underline);
+  opacity: 1;
+  transform: scaleX(1);
+}
+.nav-link--active .nav-underline--light {
+  background: linear-gradient(90deg, #0b3760, var(--wp-accent));
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Mobile list variant allows bigger tap targets */
+.nav-link--light.mobile {
+  padding: 14px 20px;
+}
+
+/* Focus rings for a11y (fallback if Tailwind ring isn't present) */
+.nav-link--light:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(26, 105, 199, 0.55);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
