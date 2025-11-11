@@ -291,14 +291,14 @@ const ContactSection = () => {
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <a
-                  href="mailto:contact@prosperedgefinance.com"
+                  href="mailto:Jack@weplanfuture.com"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3 hover:bg-white/15 transition"
                 >
                   <Mail size={18} />
                   Email Us
                 </a>
                 <a
-                  href="tel:19784301852"
+                  href="tel:1781-333-8353"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-4 py-3 hover:bg-white/15 transition"
                 >
                   <Phone size={18} />
@@ -307,7 +307,7 @@ const ContactSection = () => {
               </div>
 
               <a
-                href="https://api.whatsapp.com/send?phone=19784301852&text=Hello!"
+                href="https://api.whatsapp.com/send?phone=1781-333-8353&text=Hello!"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-3 w-full inline-flex items-center justify-center gap-3 rounded-xl bg-[#25D366] text-white px-4 py-3 hover:brightness-95 transition"
@@ -319,22 +319,22 @@ const ContactSection = () => {
               <button
                 onClick={() =>
                   window.Calendly?.initPopupWidget?.({
-                    url: "https://calendly.com/pramod-kanchan/30min",
+                    url: "https://calendly.com/jack-weplanfuture/60min",
                   })
                 }
                 className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#eef5ff] via-[#d8e2f0] to-[#eef5ff] text-[#0b2741] px-4 py-3 font-semibold border border-white/70 hover:translate-y-[-1px] transition"
               >
                 <Calendar size={18} />
-                Book a 30-min Call
+                Book a 60-min Call
               </button>
             </div>
 
             <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur p-6 text-white">
               <h4 className="text-xl font-semibold mb-1">
-                ProsperEdge Finance Solutions
+                We Plan future
               </h4>
-              <p className="text-white/90">📞 978-430-1852</p>
-              <p className="text-white/90">📧 contact@prosperedgefinance.com</p>
+              <p className="text-white/90">📞 781-333-8353</p>
+              <p className="text-white/90">📧 Jack@weplanfuture.com</p>
               <div className="flex items-center gap-2 mt-2 text-white/80">
                 <MapPin size={18} />
                 <span>Virtual consultations & by-appointment sessions</span>
@@ -350,7 +350,7 @@ const ContactSection = () => {
 
         {/* Footer */}
         <div className="mt-14 text-center text-white/80 text-sm border-t border-white/20 pt-6">
-          © {new Date().getFullYear()} ProsperEdge Finance. All Rights Reserved.
+          © {new Date().getFullYear()} We plan future. All Rights Reserved.
         </div>
       </div>
     </section>

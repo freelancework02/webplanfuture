@@ -133,13 +133,13 @@ export default function Home() {
             onClick={(e) => {
               e.preventDefault();
               window.Calendly?.initPopupWidget?.({
-                url: "https://calendly.com/pramod-kanchan/30min",
+                url: "https://calendly.com/jack-weplanfuture/60min",
               });
             }}
             className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-transform text-white bg-gradient-to-br from-[#0b3760] to-[#1a69c7]"
           >
             <Calculator className="w-5 h-5 mr-2 text-white" />
-            Book a 30-min Consultation
+            Book a 60-min Consultation
           </a>
         </section>
 

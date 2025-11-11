@@ -20,7 +20,7 @@ export default function TestimonialsSection() {
       image: "https://wesecurefuture.com/wp-content/uploads/2025/01/img-1.jpg",
       rating: 5,
       testimonial:
-        "I never realized how important a will and trust could be until Prosperedge Finance walked me through it. What felt daunting became simple and clear—and now I have peace of mind for my family.",
+        "I never realized how important a will and trust could be until We plan future walked me through it. What felt daunting became simple and clear—and now I have peace of mind for my family.",
     },
     {
       id: 2,
@@ -38,7 +38,7 @@ export default function TestimonialsSection() {
       image: "https://wesecurefuture.com/wp-content/uploads/2024/12/clientimg.jpg",
       rating: 5,
       testimonial:
-        "Prosperedge helped us map smart education funding and retirement moves. The plan is practical, the coaching is empathetic, and we feel genuinely secure about our future.",
+        "We plan future helped us map smart education funding and retirement moves. The plan is practical, the coaching is empathetic, and we feel genuinely secure about our future.",
     },
   ];
 

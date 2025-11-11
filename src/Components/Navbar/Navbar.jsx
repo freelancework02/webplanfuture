@@ -4,13 +4,6 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import Logo from "../../assets/Logo/weplanfuturenew-removebg-preview.png";
 import "./Navbar.css";
 
-/**
- * Responsive, accessible Navbar
- * - Solid on scroll (shadow + blur), translucent at top
- * - Mobile drawer shows ALL nav links (same as desktop)
- * - Body scroll lock when the drawer is open
- * - Closes on backdrop click / ESC / route change
- */
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,7 +23,6 @@ const Navbar = () => {
 
   const isActive = (p) => location.pathname === p;
 
-  // Scroll state (adds background & shadow)
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);
     onScroll();
@@ -38,19 +30,16 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while drawer is open
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = isOpen ? "hidden" : original || "";
     return () => (document.body.style.overflow = original || "");
   }, [isOpen]);
 
-  // Close drawer on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // ESC to close + focus the close button when opening
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setIsOpen(false);
     window.addEventListener("keydown", onKey);
@@ -65,11 +54,9 @@ const Navbar = () => {
         "fixed top-0 z-50 w-full transition-all duration-300",
         isScrolled ? "navbar--scrolled shadow-lg backdrop-blur" : "navbar--top",
       ].join(" ")}
-      role="banner"
     >
       <div className="container mx-auto px-3 lg:px-6">
         <div className="flex items-center justify-between gap-4 py-3 md:py-4">
-          {/* Logo + wordmark */}
           <Link
             to="/"
             className="flex items-center gap-3 h-[56px] md:h-[64px]"
@@ -80,12 +67,8 @@ const Navbar = () => {
               alt="We Plan Future"
               className={`logo ${isScrolled ? "logo--sm" : "logo--lg"}`}
             />
-            {/* <span className="hidden sm:block brand-wordmark--dark text-base md:text-lg">
-              We Plan Future
-            </span> */}
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((item) => (
               <Link
@@ -102,28 +85,11 @@ const Navbar = () => {
                 <span className="nav-underline--light" />
               </Link>
             ))}
-
-            {/* Optional CTA */}
-            {/* <button
-              onClick={() =>
-                window.Calendly?.initPopupWidget?.({
-                  url: "https://calendly.com/pramod-kanchan/30min",
-                })
-              }
-              className="ml-2 px-4 py-2 rounded-xl text-sm font-semibold text-white hover:opacity-95 transition"
-              style={{
-                background: "linear-gradient(135deg, #0b3760 0%, #1a69c7 70%)",
-                boxShadow: "0 8px 22px rgba(26,105,199,.28)",
-              }}
-            >
-              Book a Call
-            </button> */}
           </nav>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setIsOpen(true)}
-            className="lg:hidden p-2 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wpAccent/70"
+            className="lg:hidden p-2 rounded-xl"
             aria-label="Open menu"
             aria-expanded={isOpen}
             aria-controls="mobile-drawer"
@@ -133,7 +99,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Backdrop for mobile drawer */}
+      {/* Backdrop */}
       <button
         aria-hidden={!isOpen}
         tabIndex={isOpen ? 0 : -1}
@@ -144,7 +110,7 @@ const Navbar = () => {
         ].join(" ")}
       />
 
-      {/* Mobile Drawer (ALL links visible) */}
+      {/* Mobile Drawer */}
       <aside
         id="mobile-drawer"
         className={[
@@ -155,7 +121,6 @@ const Navbar = () => {
         ].join(" ")}
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile navigation"
       >
         <div className="relative h-full flex flex-col">
           {/* Drawer Header */}
@@ -164,15 +129,15 @@ const Navbar = () => {
               to="/"
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-3"
-              aria-label="We Plan Future - Home"
             >
-              <img src={Logo} alt="We Plan Future" className="h-9 w-auto object-contain" />
+              <img src={Logo} alt="We Plan Future" className="h-9 w-auto" />
               <span className="text-slate-900 font-semibold">We Plan Future</span>
             </Link>
+
             <button
               ref={closeBtnRef}
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wpAccent/70"
+              className="p-2 rounded-xl"
               aria-label="Close menu"
             >
               <AiOutlineClose className="text-3xl text-slate-800" />
@@ -196,59 +161,27 @@ const Navbar = () => {
                     ].join(" ")}
                   >
                     <span>{item.name}</span>
-                    <span
-                      className="inline-block h-2 w-2 rounded-full"
-                      style={{
-                        background: isActive(item.path)
-                          ? "linear-gradient(135deg, #0b3760, #1a69c7)"
-                          : "transparent",
-                      }}
-                    />
                   </Link>
                 </li>
               ))}
             </ul>
-
-            {/* Quick access row (optional) */}
-            <div className="px-5 pt-3 pb-5">
-              <div className="grid grid-cols-2 gap-3">
-                <Link
-                  to="/service"
-                  onClick={() => setIsOpen(false)}
-                  className="text-center rounded-xl px-3 py-3 text-sm font-semibold border border-slate-200 hover:bg-slate-50 transition"
-                >
-                  Services
-                </Link>
-                <Link
-                  to="/product"
-                  onClick={() => setIsOpen(false)}
-                  className="text-center rounded-xl px-3 py-3 text-sm font-semibold border border-slate-200 hover:bg-slate-50 transition"
-                >
-                  Products
-                </Link>
-              </div>
-            </div>
           </nav>
 
-          {/* Drawer Footer */}
-          <div
-            className="px-5 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t"
-            style={{ background: "linear-gradient(180deg, #ffffff, #f8fafc)" }}
-          >
-            <button
-              onClick={() =>
-                window.Calendly?.initPopupWidget?.({
-                  url: "https://calendly.com/pramod-kanchan/30min",
-                })
-              }
-              className="w-full px-4 py-3 rounded-xl text-sm font-semibold text-white transition"
-              style={{
-                background: "linear-gradient(135deg, #0b3760 0%, #1a69c7 70%)",
-                boxShadow: "0 8px 22px rgba(26,105,199,.28)",
-              }}
-            >
-              Book a 30-min Call
-            </button>
+          {/* ✅ Drawer Footer — FULL NAV LINKS AGAIN */}
+          <div className="px-5 pt-3 pb-6 border-t bg-white rounded-md">
+            <ul className="space-y-2">
+              {navLinks.map((item) => (
+                <li key={item.name + "-footer"}>
+                  <Link
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className="block px-4 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </aside>

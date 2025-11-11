@@ -72,7 +72,7 @@ const HeroSection = () => {
               onClick={(e) => {
                 e.preventDefault();
                 window.Calendly?.initPopupWidget?.({
-                  url: "https://calendly.com/pramod-kanchan/30min",
+                  url: "https://calendly.com/jack-weplanfuture/60min",
                 });
               }}
               rel="noopener noreferrer"
@@ -83,7 +83,7 @@ const HeroSection = () => {
                          text-[#0b2741] hover:-translate-y-0.5 inline-flex items-center gap-2"
             >
               <Calendar className="w-5 h-5" />
-              Book a 30-min Call
+              Book a 60-min Call
             </a>
 
             <a
@@ -118,13 +118,13 @@ const HeroSection = () => {
                 href="mailto:contact@ProsperEdgeFinance.com"
                 className="text-lg underline-offset-2 hover:underline"
               >
-                contact@ProsperEdgeFinance.com
+              Jack@weplanfuture.com
               </a>
             </div>
             <div className="flex items-center gap-3 text-white/95">
               <Phone className="w-5 h-5 text-[#7ec8ff]" />
               <a href="tel:19784301852" className="text-lg">
-                978-430-1852
+               781-333-8353
               </a>
             </div>
           </div>

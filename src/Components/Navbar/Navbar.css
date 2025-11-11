@@ -37,8 +37,13 @@
   object-fit: contain;
   transition: transform 200ms ease, height 200ms ease, opacity 200ms ease;
 }
-.logo--lg { height: 80px; }
-.logo--sm { height: 70px; transform: translateY(-1px); }
+.logo--lg {
+  height: 80px;
+}
+.logo--sm {
+  height: 70px;
+  transform: translateY(-1px);
+}
 
 /* Wordmark */
 .brand-wordmark--dark {
@@ -85,12 +90,12 @@
   transform: scaleX(1);
 }
 
-/* Mobile list variant allows bigger tap targets */
+/* Mobile tap targets */
 .nav-link--light.mobile {
   padding: 14px 20px;
 }
 
-/* Focus rings for a11y (fallback if Tailwind ring isn't present) */
+/* Focus rings (fallback) */
 .nav-link--light:focus-visible,
 button:focus-visible,
 a:focus-visible {

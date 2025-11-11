@@ -56,7 +56,7 @@ export default function PartnerProgram() {
   const openCalendly = () => {
     const openPopup = () =>
       window.Calendly?.initPopupWidget({
-        url: "https://calendly.com/pramod-kanchan/30min",
+        url: "https://calendly.com/jack-weplanfuture/60min",
       });
 
     if (calendlyReadyRef.current && window.Calendly) {
@@ -285,7 +285,7 @@ export default function PartnerProgram() {
                     boxShadow: "0 8px 22px rgba(26,105,199,.35)",
                   }}
                 >
-                  Book a 30-min Call
+                  Book a 60-min Call
                 </button>
               </div>
             </div>

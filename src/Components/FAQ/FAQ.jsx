@@ -136,7 +136,7 @@ const FoundationalCommitments = () => {
               href="mailto:contact@ProsperEdgeFinance.com"
               className="text-blue-600 font-semibold hover:underline"
             >
-              contact@ProsperEdgeFinance.com
+            Jack@weplanfuture.com
             </a>
           </span>
         </div>

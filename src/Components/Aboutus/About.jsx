@@ -1,5 +1,5 @@
 import React from "react";
-import image from "../../assets/image.png";
+import image from "../../assets/image.jpeg";
 
 /**
  * AboutUs
@@ -52,7 +52,7 @@ export default function AboutUs() {
               <h2 className="text-2xl font-semibold text-slate-900">Our Mission</h2>
 
               <p className="text-slate-700 leading-relaxed">
-                At Prosper Edge Finance, we understand that personal finances can be overwhelming and confusing, especially when there's little formal education on the topic. Our mission is to bridge this gap by empowering you with the knowledge and tools you need to take control of your financial future. We recognize that every family is unique, with distinct goals, time horizons, and challenges, and we are here to support you every step of the way.{" "}
+                At We Plan future, we understand that personal finances can be overwhelming and confusing, especially when there's little formal education on the topic. Our mission is to bridge this gap by empowering you with the knowledge and tools you need to take control of your financial future. We recognize that every family is unique, with distinct goals, time horizons, and challenges, and we are here to support you every step of the way.{" "}
               </p>
 
               <p className="text-slate-700 leading-relaxed">
@@ -98,8 +98,8 @@ export default function AboutUs() {
                   <div className="w-full h-full rounded-full overflow-hidden border border-white shadow-lg">
                     <img
                       src={image}
-                      alt="Founder Pramod Sonawane"
-                      className="w-full h-full object-cover"
+                      alt="Founder Jack Patel"
+                      className="w-full h-full object-cover "
                     />
                   </div>
                 </div>
@@ -109,10 +109,10 @@ export default function AboutUs() {
                 Founder
               </h2>
               <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900">
-                Pramod Sonawane
+                Jack Patel
               </h3>
               <p className="text-slate-600 text-sm md:text-base">
-                (License Number - 21471647)
+                (License Number - 21322826)
               </p>
 
               {/* Accent line */}
