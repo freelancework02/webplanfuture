@@ -325,7 +325,7 @@ const ContactSection = () => {
                 className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#eef5ff] via-[#d8e2f0] to-[#eef5ff] text-[#0b2741] px-4 py-3 font-semibold border border-white/70 hover:translate-y-[-1px] transition"
               >
                 <Calendar size={18} />
-                Book a 60-min Call
+                Book a Call
               </button>
             </div>
 
@@ -339,11 +339,11 @@ const ContactSection = () => {
                 <MapPin size={18} />
                 <span>Virtual consultations & by-appointment sessions</span>
               </div>
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h5 className="font-semibold text-white">Business Hours</h5>
                 <p className="text-white/90">Mon–Fri: 6 PM – 9 PM</p>
                 <p className="text-white/90">Sat–Sun: By Appointment (1 PM – 4 PM)</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

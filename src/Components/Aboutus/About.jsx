@@ -1,5 +1,5 @@
 import React from "react";
-import image from "../../assets/image.jpeg";
+import image from "../../assets/image2.png";
 
 /**
  * AboutUs

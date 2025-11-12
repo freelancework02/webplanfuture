@@ -18,7 +18,7 @@ export default function Productcard() {
   const openCalendly = () => {
     const openPopup = () =>
       window.Calendly?.initPopupWidget({
-        url: "https://calendly.com/pramod-kanchan/30min",
+        url: "https://calendly.com/jack-weplanfuture/60min",
       });
 
     if (calendlyReadyRef.current && window.Calendly) {
@@ -186,7 +186,13 @@ export default function Productcard() {
                 {/* mini CTA per card */}
                 <div className="mt-6 flex">
                   <a
-                    href="#contact"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault(); // stop navigation
+                      window.Calendly?.initPopupWidget?.({
+                        url: "https://calendly.com/jack-weplanfuture/60min",
+                      });
+                    }}
                     className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
                     style={{
                       background:

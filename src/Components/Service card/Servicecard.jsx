@@ -143,7 +143,13 @@ export default function Servicecard() {
                 {/* CTA */}
                 <div className="mt-6 md:mt-7 flex items-center justify-center md:justify-start">
                   <a
-                    href="#contact"
+                    href="#"
+  onClick={(e) => {
+    e.preventDefault(); // stop navigation
+    window.Calendly?.initPopupWidget?.({
+      url: "https://calendly.com/jack-weplanfuture/60min",
+    });
+  }}
                     className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
                     style={{
                       background:

@@ -51,7 +51,7 @@ const cardData = [
 export default function PartnerProgram() {
   const [selectedCard, setSelectedCard] = useState(null);
 
-  // ───── Calendly loader (works even if script missing) ─────
+  // Calendly script loader
   const calendlyReadyRef = useRef(false);
   const openCalendly = () => {
     const openPopup = () =>
@@ -101,7 +101,7 @@ export default function PartnerProgram() {
     }
   }, []);
 
-  // Close modal on ESC
+  // ESC to close modal
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setSelectedCard(null);
     window.addEventListener("keydown", onKey);
@@ -121,7 +121,7 @@ export default function PartnerProgram() {
           "radial-gradient(1100px 540px at -10% -10%, rgba(20,64,107,.10), transparent), radial-gradient(900px 520px at 110% 0%, rgba(10,41,77,.14), transparent)",
       }}
     >
-      {/* header */}
+      {/* Header */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-3">
           <span
@@ -133,7 +133,6 @@ export default function PartnerProgram() {
                 "polygon(25% 6%, 75% 6%, 94% 50%, 75% 94%, 25% 94%, 6% 50%)",
             }}
           >
-            {/* small arrow made from CSS borders */}
             <svg
               width="22"
               height="22"
@@ -183,15 +182,15 @@ export default function PartnerProgram() {
         </div>
       </div>
 
-      {/* cards */}
+      {/* Cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {cardData.map((card, idx) => (
           <article
             key={idx}
             onClick={() => setSelectedCard(card)}
-            className="group relative flex flex-col justify-between rounded-2xl p-7 cursor-pointer overflow-hidden border border-slate-200/70 bg-white/85 backdrop-blur shadow-[0_6px_30px_rgba(10,41,77,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_18px_60px_rgba(10,41,77,0.18)]"
+            className="group relative flex flex-col h-full justify-between rounded-2xl p-7 cursor-pointer overflow-hidden border border-slate-200/70 bg-white/85 backdrop-blur shadow-[0_6px_30px_rgba(10,41,77,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_18px_60px_rgba(10,41,77,0.18)]"
           >
-            {/* Decorative hex in corner */}
+            {/* Decorative hex */}
             <span
               className="absolute -top-5 -right-5 w-24 h-24 opacity-90 transition-transform duration-500 group-hover:rotate-6"
               aria-hidden="true"
@@ -204,32 +203,38 @@ export default function PartnerProgram() {
               }}
             />
 
-            {/* icon */}
-            <div className="mb-5">
-              <div className="w-14 h-14 rounded-2xl grid place-items-center transition-all duration-300 shadow-md group-hover:shadow-lg"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(8,38,69,1), rgba(14,62,110,1))",
-                }}>
-                <card.Icon className="w-7 h-7 text-white" />
+            {/* Content */}
+            <div className="flex flex-col flex-1">
+              {/* Icon */}
+              <div className="mb-5">
+                <div
+                  className="w-14 h-14 rounded-2xl grid place-items-center transition-all duration-300 shadow-md group-hover:shadow-lg"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(8,38,69,1), rgba(14,62,110,1))",
+                  }}
+                >
+                  <card.Icon className="w-7 h-7 text-white" />
+                </div>
               </div>
+
+              {/* Title */}
+              <h3 className="text-lg font-bold text-slate-900 group-hover:text-slate-900">
+                {card.title}
+              </h3>
+
+              {/* Description preview */}
+              <ul className="mt-3 text-sm text-slate-600 leading-relaxed list-disc pl-5 space-y-1 flex-1">
+                {card.description.slice(0, 3).map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+                {card.description.length > 3 && (
+                  <li className="italic text-slate-500">Tap to read more…</li>
+                )}
+              </ul>
             </div>
 
-            {/* title + content preview */}
-            <h3 className="text-lg font-bold text-slate-900 group-hover:text-slate-900">
-              {card.title}
-            </h3>
-
-            <ul className="mt-3 text-sm text-slate-600 leading-relaxed list-disc pl-5 space-y-1">
-              {card.description.slice(0, 3).map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-              {card.description.length > 3 && (
-                <li className="italic text-slate-500">Tap to read more…</li>
-              )}
-            </ul>
-
-            {/* hover ring */}
+            {/* Hover ring */}
             <div
               className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 ring-1 transition-opacity group-hover:opacity-100"
               style={{
@@ -241,7 +246,7 @@ export default function PartnerProgram() {
         ))}
       </div>
 
-      {/* modal */}
+      {/* Modal */}
       {selectedCard && (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-black/50 px-4"
@@ -285,7 +290,7 @@ export default function PartnerProgram() {
                     boxShadow: "0 8px 22px rgba(26,105,199,.35)",
                   }}
                 >
-                  Book a 60-min Call
+                  Book a Call
                 </button>
               </div>
             </div>

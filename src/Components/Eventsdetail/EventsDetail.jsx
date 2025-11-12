@@ -39,7 +39,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
       date: "2025-11-18T17:30:00+05:30",
       description:
         "A hands-on session covering design tokens, accessibility, and performance budgets. Bring your questions and screens!",
-      host: "We Plan Future — Pramod K.",
+      host: "We Plan Future — Jack Patel.",
       meetingLink: "https://meet.example.com/weplanfuture-demo",
       thumbnailUrl:
         "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1400&auto=format&fit=crop",
