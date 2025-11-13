@@ -298,9 +298,9 @@ export default function PartnerProgram() {
         </div>
       )}
 
-      <div className="mt-16">
+      {/* <div className="mt-16">
         <TestimonialsSection />
-      </div>
+      </div> */}
     </section>
   );
 }

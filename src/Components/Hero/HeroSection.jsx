@@ -9,7 +9,7 @@ import {
   ArrowRight,
   Calendar,
 } from "lucide-react";
-import img from '../../assets/hero.png'
+import img from '../../assets/image3.png'
 
 /**
  * IMPORTANT: Put the generated image file into your public folder
@@ -73,8 +73,8 @@ const HeroSection = ({ topOffset = 88 }) => {
   ];
 
   const stats = [
-    { k: "98%", v: "Client Satisfaction" },
-    { k: "15+ yrs", v: "Combined Expertise" },
+    { k: "99%", v: "Client Satisfaction" },
+    { k: "26+ yrs", v: "Combined Expertise" },
     { k: "1,200+", v: "Plans Reviewed" },
   ];
 
@@ -208,7 +208,8 @@ const HeroSection = ({ topOffset = 88 }) => {
                 <img
                   src={img}
                   alt="Financial advisors reviewing growth charts and plans at a desk"
-                  className="w-full h-[320px] md:h-[420px] lg:h-[480px] object-cover"
+                 className="w-full h-[320px] md:h-[420px] lg:h-[480px] object-contain object-center bg-gray-100 rounded-2xl"
+
                   loading="eager"
                   fetchpriority="high"
                 />
