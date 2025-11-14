@@ -193,10 +193,10 @@ const HeroSection = ({ topOffset = 88 }) => {
           </div>
 
           {/* Light compliance note (optional, edit as needed) */}
-          <p className="text-xs text-white/60 max-w-2xl">
+          {/* <p className="text-xs text-white/60 max-w-2xl">
             Educational content. Not an offer to buy or sell securities. Decisions should
             consider your unique situation and objectives.
-          </p>
+          </p> */}
         </div>
 
         {/* RIGHT: Image illustration */}
@@ -208,7 +208,7 @@ const HeroSection = ({ topOffset = 88 }) => {
                 <img
                   src={img}
                   alt="Financial advisors reviewing growth charts and plans at a desk"
-                 className="w-full h-[320px] md:h-[420px] lg:h-[480px] object-contain object-center bg-gray-100 rounded-2xl"
+                 className="w-full h-[320px] md:h-[420px] lg:h-[480px] object-contain object-center bg-white rounded-2xl"
 
                   loading="eager"
                   fetchpriority="high"

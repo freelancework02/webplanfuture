@@ -1,13 +1,8 @@
-import React, { useState } from "react";
+// FoundationalCommitments.fixed.jsx
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, Mail, HelpCircle } from "lucide-react";
 import faqimg from "../../assets/faqimg.jpg";
 
-/**
- * Modern responsive FAQ section
- * - Clean finance-style gradient theme
- * - Accessible accordions with smooth transitions
- * - Works perfectly across mobile, tablet, and desktop
- */
 const commitmentsData = [
   {
     title:
@@ -39,14 +34,21 @@ const commitmentsData = [
 
 const FoundationalCommitments = () => {
   const [openItem, setOpenItem] = useState(null);
-  const toggleItem = (index) => setOpenItem(openItem === index ? null : index);
+
+  // refs to measure heights for smooth collapse/expand
+  const contentRefs = useRef([]);
+  useEffect(() => {
+    // ensure array length matches data length
+    contentRefs.current = contentRefs.current.slice(0, commitmentsData.length);
+  }, [commitmentsData.length]);
+
+  const toggleItem = (index) => setOpenItem((prev) => (prev === index ? null : index));
 
   return (
     <section
       className="py-16 px-6 md:px-10 bg-gradient-to-b from-[#f8fafc] via-white to-[#f1f5f9]"
       id="faq"
     >
-      {/* Header */}
       <div className="text-center mb-14">
         <h2 className="text-sm uppercase tracking-[0.2em] font-semibold text-blue-600 mb-3">
           Frequently Asked Questions
@@ -59,9 +61,7 @@ const FoundationalCommitments = () => {
         </p>
       </div>
 
-      {/* Main Layout */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
-        {/* Accordion Section */}
         <div className="w-full">
           {commitmentsData.map((item, index) => {
             const isOpen = openItem === index;
@@ -75,36 +75,57 @@ const FoundationalCommitments = () => {
                 }`}
               >
                 <button
-                  className="flex w-full items-center justify-between px-6 py-5 text-left"
+                  id={`faq-btn-${index}`}
+                  aria-controls={`faq-panel-${index}`}
+                  aria-expanded={isOpen}
                   onClick={() => toggleItem(index)}
+                  className="flex w-full items-center justify-between px-6 py-5 text-left"
                 >
                   <span className="text-base md:text-lg font-semibold text-slate-900 pr-4">
                     {item.title}
                   </span>
-                  <ChevronDown
-                    className={`h-6 w-6 text-blue-600 transition-transform duration-300 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
+
+                  {/* Chevron wrapper: apply rotation on wrapper to ensure consistent icon rendering */}
+                  <span
+                    className="flex-shrink-0"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "transform 300ms ease",
+                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
+                    aria-hidden="true"
+                  >
+                    <ChevronDown className="h-6 w-6 text-blue-600" />
+                  </span>
                 </button>
 
+                {/* Animated collapse using measured maxHeight for smooth transition */}
                 <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-                  }`}
+                  id={`faq-panel-${index}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${index}`}
+                  className="px-6 pb-5 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+                  ref={(el) => (contentRefs.current[index] = el)}
+                  style={{
+                    maxHeight: isOpen
+                      ? contentRefs.current[index]
+                        ? `${contentRefs.current[index].scrollHeight}px`
+                        : "500px"
+                      : "0px",
+                    opacity: isOpen ? 1 : 0,
+                  }}
                 >
-                  <div className="overflow-hidden px-6 pb-5">
-                    <p className="text-slate-600 leading-relaxed text-[16px]">
-                      {item.content}
-                    </p>
-                  </div>
+                  <p className="text-slate-600 leading-relaxed text-[16px]">
+                    {item.content}
+                  </p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Image + Overlay Section */}
         <div className="relative flex justify-center items-center">
           <div className="relative w-full h-[380px] md:h-[480px] rounded-2xl overflow-hidden shadow-xl">
             <img
@@ -118,25 +139,19 @@ const FoundationalCommitments = () => {
                 <HelpCircle className="w-5 h-5 text-blue-600" />
                 Trusted by 1,200+ families
               </p>
-              <p className="text-sm text-slate-600">
-                Real people. Real results. Real confidence.
-              </p>
+              <p className="text-sm text-slate-600">Real people. Real results. Real confidence.</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Contact CTA */}
       <div className="text-center mt-14">
         <div className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <Mail className="w-5 h-5 text-blue-600" />
           <span className="text-slate-700 text-lg">
-            Still have questions? Reach us at{" "}
-            <a
-              href="mailto:contact@ProsperEdgeFinance.com"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-            Jack@weplanfuture.com
+            Still have questions? Reach us at{' '}
+            <a href="mailto:contact@ProsperEdgeFinance.com" className="text-blue-600 font-semibold hover:underline">
+              Jack@weplanfuture.com
             </a>
           </span>
         </div>

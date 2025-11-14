@@ -191,7 +191,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                       }}
                     >
                       <FiVideo />
-                      Join Meeting
+                    RSVP Here
                       <FiExternalLink />
                     </a>
                   )}
@@ -283,7 +283,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                       boxShadow: "0 8px 22px rgba(26,105,199,.28)",
                     }}
                   >
-                    Join Meeting
+                  RSVP Here
                   </button>
                 )}
               </div>
