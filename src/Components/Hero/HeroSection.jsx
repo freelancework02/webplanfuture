@@ -208,7 +208,7 @@ const HeroSection = ({ topOffset = 88 }) => {
                 <img
                   src={img}
                   alt="Financial advisors reviewing growth charts and plans at a desk"
-                 className="w-full h-[320px] md:h-[420px] lg:h-[480px] object-contain object-center bg-white rounded-2xl"
+                 className="w-full h-[420px] md:h-[420px] lg:h-[565px] object-contain object-center bg-white rounded-2xl"
 
                   loading="eager"
                   fetchpriority="high"

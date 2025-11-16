@@ -49,18 +49,36 @@ export default function AboutUs() {
           <div className="flex flex-col-reverse md:flex-row items-center md:items-start gap-10 md:gap-14">
             {/* Text Content (unchanged text) */}
             <div className="md:w-1/2 space-y-6">
-              <h2 className="text-2xl font-semibold text-slate-900">Our Mission</h2>
+              <h2 className="text-2xl font-semibold text-slate-900">
+                Our Mission
+              </h2>
 
               <p className="text-slate-700 leading-relaxed">
-                At We Plan future, we understand that personal finances can be overwhelming and confusing, especially when there's little formal education on the topic. Our mission is to bridge this gap by empowering you with the knowledge and tools you need to take control of your financial future. We recognize that every family is unique, with distinct goals, time horizons, and challenges, and we are here to support you every step of the way.{" "}
+                At We Plan future, we understand that personal finances can be
+                overwhelming and confusing, especially when there's little
+                formal education on the topic. Our mission is to bridge this gap
+                by empowering you with the knowledge and tools you need to take
+                control of your financial future. We recognize that every family
+                is unique, with distinct goals, time horizons, and challenges,
+                and we are here to support you every step of the way.{" "}
               </p>
 
               <p className="text-slate-700 leading-relaxed">
-                We start by educating you on budgeting, saving, investing, and debt management, helping you build a solid financial foundation. Then, we work with you to develop tailored financial strategies that align with your specific goals, whether it's saving for education, planning consistent tax-deferred wealth stream, plan rollover,  planning for retirement, or managing daily expenses.          
+                We start by educating you on budgeting, saving, investing, and
+                debt management, helping you build a solid financial foundation.
+                Then, we work with you to develop tailored financial strategies
+                that align with your specific goals, whether it's saving for
+                education, planning consistent tax-deferred wealth stream, plan
+                rollover, planning for retirement, or managing daily expenses.
               </p>
 
               <p className="text-slate-700 leading-relaxed">
-                Our ongoing support includes financial tools, workshops, and one-on-one consultations, fostering confidence and resilience. Ultimately, we aim to demystify personal finance and help you build a secure and prosperous financial life through education and personalized guidance. We're here for you, every step of the way.          
+                Our ongoing support includes financial tools, workshops, and
+                one-on-one consultations, fostering confidence and resilience.
+                Ultimately, we aim to demystify personal finance and help you
+                build a secure and prosperous financial life through education
+                and personalized guidance. We're here for you, every step of the
+                way.
               </p>
 
               {/* Subtle divider + badges for visual rhythm (no new copy) */}
@@ -94,12 +112,12 @@ export default function AboutUs() {
                     opacity: 0.55,
                   }}
                 />
-                <div className="relative w-60 h-60 md:w-72 md:h-72 rounded-full p-[6px] bg-gradient-to-br from-blue-600 to-blue-400 shadow-[0_20px_50px_-22px_rgba(30,64,175,.55)]">
-                  <div className="w-full h-full rounded-full overflow-hidden border border-white shadow-lg">
+                <div className="relative w-62 h-62 md:w-72 md:h-72 rounded-full  bg-white border border-white">
+                  <div className="w-full h-full rounded-full overflow-hidden shadow-lg">
                     <img
                       src={image}
                       alt="Founder Jack Patel"
-                      className="w-full h-full object-cover "
+                      className="w-full h-full object-cover ml-[20px]"
                     />
                   </div>
                 </div>

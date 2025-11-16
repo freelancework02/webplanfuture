@@ -5,39 +5,35 @@ import emailjs from "emailjs-com";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-/**
- * ContactSection – professional, responsive, conversion-focused
- * - Clean finance palette, strong contrast, subtle gradients
- * - Better validation + accessibility + spam honeypot
- * - Clear CTAs: Email, WhatsApp, and Book a Call (Calendly)
- * Requires TailwindCSS + react-toastify + emailjs-com
- */
 const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-    company: "", // honeypot (leave blank)
+    company: "", // honeypot
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Basic but solid email & message validation
   const validateForm = () => {
     const newErrors = {};
+
     if (!formData.name || formData.name.trim().length < 2) {
       newErrors.name = "Please enter your full name (at least 2 characters).";
     }
+
     const email = String(formData.email || "").trim();
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
     if (!emailOk) {
       newErrors.email = "Please enter a valid email address.";
     }
+
     if (!formData.message || formData.message.trim().length < 12) {
       newErrors.message = "Tell us a bit more (at least 12 characters).";
     }
-    // honeypot: if filled, treat as spam
+
+    // Honeypot protection
     if (formData.company && formData.company.trim().length > 0) {
       newErrors.company = "Spam detected.";
     }
@@ -56,18 +52,20 @@ const ContactSection = () => {
 
     setIsSubmitting(true);
 
+    // These match your EmailJS template fields
     const templateParams = {
       from_name: formData.name,
       email: formData.email,
       message: formData.message,
+      time: new Date().toLocaleString(), // optional: fill {{time}}
     };
 
     emailjs
       .send(
-        "service_o49f57q",
-        "template_zueof2i",
+        "service_o49f57q",      // ✅ updated service ID
+        "template_9g6np59",     // ✅ updated template ID
         templateParams,
-        "_NCXgVXdplNNFVAvR"
+        "_NCXgVXdplNNFVAvR"     // your public key
       )
       .then(
         (response) => {
