@@ -12,130 +12,199 @@ import {
 } from "react-icons/fi";
 
 /**
- * Props (all optional; demo data is shown if omitted)
- * {
- *   event: {
- *     title, date, description, host, meetingLink,
- *     thumbnailUrl, gallery: string[]
- *   },
- *   previousEvents: Array<{
- *     id?: string|number,
- *     title: string,
- *     date: string|Date,
- *     host?: string,
- *     thumbnailUrl?: string,
- *     meetingLink?: string,         // (recording/replay link is fine here too)
- *     recordingLink?: string,       // optional, if you separate from meetingLink
- *     onClick?: () => void          // optional card click handler
- *   }>
- * }
+ * EventsDetail (API-backed)
+ *
+ * Props:
+ *  - apiBase (string) default "https://weplanfuture.com/api"
+ *  - perPage (number) how many events to fetch for "previous" list (default 6)
+ *
+ * Behavior:
+ *  - loads /events?per={perPage}&page=1 and picks the latest event (by event_date / created_at)
+ *  - if selected event lacks images, does GET /events/:id to fetch images
+ *  - previous events shown are the remaining items from the initial list (sorted)
  */
 
-const EventsDetail = ({ event = {}, previousEvents = [] }) => {
-  // ---- Demo fallbacks ----
-  const demoCurrent = useMemo(
-    () => ({
-      title: "Design Systems & DX: A Practical Deep Dive",
-      date: "2025-11-18T17:30:00+05:30",
-      description:
-        "A hands-on session covering design tokens, accessibility, and performance budgets. Bring your questions and screens!",
-      host: "We Plan Future — Jack Patel.",
-      meetingLink: "https://meet.example.com/weplanfuture-demo",
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1400&auto=format&fit=crop",
-      gallery: [
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1487014679447-9f8336841d58?q=80&w=1400&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1529336953121-a9d1b95a0df1?q=80&w=1400&auto=format&fit=crop",
-      ],
-    }),
-    []
-  );
+const EventsDetail = ({ apiBase = "https://weplanfuture.com/api", perPage = 6 }) => {
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+  const [current, setCurrent] = useState(null); // the selected/latest event object
+  const [gallery, setGallery] = useState([]); // array of image urls for current event
+  const [previous, setPrevious] = useState([]); // previous events list
 
-  const demoPrevious = useMemo(
-    () => [
-      {
-        id: 101,
-        title: "Frontend Roadmap & Services Showcase",
-        date: "2025-10-22T18:00:00+05:30",
-        host: "We Plan Future",
-        thumbnailUrl:
-          "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1200&auto=format&fit=crop",
-        recordingLink: "https://example.com/recording/frontend-roadmap",
-      },
-      {
-        id: 102,
-        title: "React Accessibility: Patterns That Scale",
-        date: "2025-09-10T17:00:00+05:30",
-        host: "WPF Community",
-        thumbnailUrl:
-          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop",
-        recordingLink: "https://example.com/recording/react-a11y",
-      },
-      {
-        id: 103,
-        title: "Tailwind + Design Tokens in Production",
-        date: "2025-08-05T19:00:00+05:30",
-        host: "We Plan Future — Tech",
-        thumbnailUrl:
-          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
-        recordingLink: "https://example.com/recording/tokens-prod",
-      },
-      {
-        id: 104,
-        title: "Performance Budgets: Tooling & Culture",
-        date: "2025-07-12T17:30:00+05:30",
-        host: "WPF Labs",
-        thumbnailUrl:
-          "https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=1200&auto=format&fit=crop",
-        recordingLink: "https://example.com/recording/perf-budgets",
-      },
-    ],
-    []
-  );
-
-  const model = { ...demoCurrent, ...event };
-  const prevList = (Array.isArray(previousEvents) && previousEvents.length > 0)
-    ? previousEvents
-    : demoPrevious;
-
-  // ---- Date formatting ----
-  const displayDate = useMemo(() => formatDate(model.date), [model.date]);
-
-  // ---- Lightbox state ----
+  // lightbox state
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);
-  const images = model.gallery || [];
-  const hasGallery = images && images.length > 0;
   const lbRef = useRef(null);
 
+  // fetch list and resolve latest + images
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    setErr("");
+
+    (async () => {
+      try {
+        // Try to fetch a page of events (list endpoint)
+        const listUrl = `${apiBase}/events?per=${encodeURIComponent(perPage)}&page=1`;
+        const r = await fetch(listUrl, { credentials: "include" });
+        if (!r.ok) {
+          // fallback: try without query params
+          const r2 = await fetch(`${apiBase}/events`, { credentials: "include" });
+          if (!r2.ok) throw new Error(`Failed to fetch events (${r.status})`);
+          const txt2 = await r2.text();
+          var listJson = safeParse(txt2);
+        } else {
+          const txt = await r.text();
+          var listJson = safeParse(txt);
+        }
+
+        // Normalize items array from list response
+        const items =
+          Array.isArray(listJson)
+            ? listJson
+            : listJson && Array.isArray(listJson.data)
+            ? listJson.data
+            : listJson && Array.isArray(listJson.rows)
+            ? listJson.rows
+            : [];
+
+        if (!items || items.length === 0) {
+          if (mounted) {
+            setPrevious([]);
+            setCurrent(null);
+            setGallery([]);
+            setErr("No events available.");
+            setLoading(false);
+          }
+          return;
+        }
+
+        // choose latest event by event_date then created_at
+        const sorted = [...items].sort((a, b) => {
+          const ta = new Date(a.event_date || a.created_at || a.createdAt || 0).getTime();
+          const tb = new Date(b.event_date || b.created_at || b.createdAt || 0).getTime();
+          return tb - ta; // newest first
+        });
+
+        const latest = sorted[0];
+        const prevs = sorted.slice(1);
+
+        // Try to extract images from the list item (some APIs include them; some don't)
+        const imagesFromList = extractImageUrlsFromEntry(latest, apiBase, "events");
+
+        // If no images in list, fetch detail for the latest event
+        let detailImages = imagesFromList;
+        if ((!imagesFromList || imagesFromList.length === 0) && (latest.id || latest.ID || latest.event_id)) {
+          const id = latest.id ?? latest.ID ?? latest.event_id;
+          try {
+            const rr = await fetch(`${apiBase}/events/${encodeURIComponent(id)}`, { credentials: "include" });
+            if (rr.ok) {
+              const txt = await rr.text();
+              const json = safeParse(txt);
+              const blogObj = json && (json.event || json.data) ? (json.event || json.data) : json;
+              const imgsArr = Array.isArray(json.images) ? json.images : Array.isArray(blogObj.images) ? blogObj.images : [];
+              detailImages = resolveImageArray(imgsArr, apiBase, "events");
+              // also merge any fields returned in blogObj into latest
+              if (blogObj && typeof blogObj === "object") {
+                // shallow merge to include fields like description, cover_image_id, images_count, etc
+                Object.assign(latest, blogObj);
+              }
+            }
+          } catch (e) {
+            console.warn("Failed to fetch event detail for images", e);
+          }
+        }
+
+        // If still empty and cover_image_id present, build from that
+        if ((!detailImages || detailImages.length === 0) && (latest.cover_image_id || latest.coverImageId)) {
+          const cid = latest.cover_image_id ?? latest.coverImageId;
+          detailImages = [buildBlobUrl(apiBase, "events", cid)];
+        }
+
+        if (mounted) {
+          setCurrent(latest);
+          setGallery(detailImages || []);
+          setPrevious(prevs);
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error(e);
+        if (mounted) {
+          setErr(e.message || "Failed to load events");
+          setLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [apiBase, perPage]);
+
+  // Lightbox helpers
   const openAt = (i) => {
     setIdx(i);
     setOpen(true);
   };
-  const next = () => setIdx((p) => (p + 1) % images.length);
-  const prev = () => setIdx((p) => (p - 1 + images.length) % images.length);
+  const next = () => setIdx((p) => (p + 1) % (gallery.length || 1));
+  const prev = () => setIdx((p) => (p - 1 + (gallery.length || 1)) % (gallery.length || 1));
 
-  // ESC to close, arrows to navigate
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => {
       if (e.key === "Escape") setOpen(false);
-      if (e.key === "ArrowRight" && hasGallery) next();
-      if (e.key === "ArrowLeft" && hasGallery) prev();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, hasGallery]);
+  }, [open, gallery]);
 
   const gradient = "linear-gradient(135deg, #0b3760 0%, #1a69c7 70%)";
 
   const joinMeeting = () => {
-    if (!model.meetingLink) return;
-    window.open(model.meetingLink, "_blank", "noopener,noreferrer");
+    if (!current) return;
+    const link = current.link || current.meetingLink || current.recordingLink;
+    if (!link) return;
+    window.open(link, "_blank", "noopener,noreferrer");
   };
+
+  // UI: loading / error
+  if (loading) {
+    return (
+      <section className="w-full mt-[80px] mb-[40px] grid place-items-center p-8">
+        <div className="text-center">
+          <div className="h-12 w-12 mx-auto mb-4 rounded-full animate-spin border-4 border-t-transparent border-slate-700" />
+          <p className="text-slate-700">Loading events…</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (err) {
+    return (
+      <section className="w-full mt-[80px] mb-[40px] grid place-items-center p-8">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold mb-2">Couldn’t load events</h3>
+          <p className="text-slate-600 mb-4">{err}</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!current) {
+    return (
+      <section className="w-full mt-[80px] mb-[40px] grid place-items-center p-8">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold mb-2">No upcoming events</h3>
+          <p className="text-slate-600">We’ll show events here when they’re available.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const model = mapEventFields(current);
+  const prevList = (Array.isArray(previous) && previous.length > 0) ? previous.map(mapEventFields) : [];
 
   return (
     <section className="w-full mt-[100px] mb-[40px]">
@@ -143,7 +212,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
       <div className="relative">
         <div className="relative h-[42vw] max-h-[420px] w-full overflow-hidden rounded-none sm:rounded-2xl">
           <img
-            src={model.thumbnailUrl}
+            src={gallery[0] || model.thumbnailUrl}
             alt={model.title || "Event"}
             className="h-full w-full object-cover"
           />
@@ -154,7 +223,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
               style={{ background: "rgba(0,0,0,.28)", border: "1px solid rgba(255,255,255,.2)" }}
             >
               <FiCalendar className="text-sm" />
-              <span>{displayDate}</span>
+              <span>{formatDate(model.date)}</span>
             </div>
 
             <h1 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-extrabold text-white drop-shadow">
@@ -191,7 +260,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                       }}
                     >
                       <FiVideo />
-                    RSVP Here
+                      RSVP Here
                       <FiExternalLink />
                     </a>
                   )}
@@ -223,9 +292,9 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                 <h2 className="text-lg sm:text-xl font-bold text-slate-900">Event Gallery</h2>
               </div>
 
-              {hasGallery ? (
+              {gallery && gallery.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {images.map((src, i) => (
+                  {gallery.map((src, i) => (
                     <button
                       key={i}
                       onClick={() => openAt(i)}
@@ -260,7 +329,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                     <span className="mt-0.5 text-slate-500"><FiCalendar /></span>
                     <div>
                       <div className="font-medium text-slate-900">Date & Time</div>
-                      <div>{displayDate}</div>
+                      <div>{formatDate(model.date)}</div>
                     </div>
                   </li>
                   {model.host && (
@@ -283,7 +352,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
                       boxShadow: "0 8px 22px rgba(26,105,199,.28)",
                     }}
                   >
-                  RSVP Here
+                    RSVP Here
                   </button>
                 )}
               </div>
@@ -320,7 +389,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
       </div>
 
       {/* Lightbox */}
-      {open && hasGallery && (
+      {open && gallery && gallery.length > 0 && (
         <div
           ref={lbRef}
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center"
@@ -338,10 +407,7 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
           </button>
 
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              prev();
-            }}
+            onClick={(e) => { e.stopPropagation(); prev(); }}
             className="absolute left-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
             aria-label="Previous image"
           >
@@ -349,21 +415,12 @@ const EventsDetail = ({ event = {}, previousEvents = [] }) => {
           </button>
 
           <div className="max-w-[92vw] max-h-[82vh] px-10" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={images[idx]}
-              alt={`Preview ${idx + 1}`}
-              className="mx-auto h-full w-full object-contain"
-            />
-            <div className="mt-3 text-center text-sm text-white/80">
-              {idx + 1} / {images.length}
-            </div>
+            <img src={gallery[idx]} alt={`Preview ${idx + 1}`} className="mx-auto h-full w-full object-contain" />
+            <div className="mt-3 text-center text-sm text-white/80">{idx + 1} / {gallery.length}</div>
           </div>
 
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              next();
-            }}
+            onClick={(e) => { e.stopPropagation(); next(); }}
             className="absolute right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
             aria-label="Next image"
           >
@@ -382,26 +439,20 @@ export default EventsDetail;
 function PreviousEventCard({ data, gradient }) {
   const dateStr = formatDate(data.date);
   const isPast = isPastDate(data.date);
-  const ctaHref = data.recordingLink || data.meetingLink;
+  const ctaHref = data.recordingLink || data.meetingLink || data.link;
   const ctaLabel = data.recordingLink ? "Watch Recording" : "Open Link";
 
   return (
     <div className="group rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative aspect-[16/9] w-full overflow-hidden">
         <img
-          src={
-            data.thumbnailUrl ||
-            "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1200&auto=format&fit=crop"
-          }
+          src={data.thumbnailUrl || "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1200&auto=format&fit=crop"}
           alt={data.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
         {isPast && (
-          <span
-            className="absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-semibold text-white shadow"
-            style={{ background: gradient }}
-          >
+          <span className="absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-semibold text-white shadow" style={{ background: gradient }}>
             Past
           </span>
         )}
@@ -438,10 +489,7 @@ function PreviousEventCard({ data, gradient }) {
               {ctaLabel}
             </a>
           ) : (
-            <button
-              onClick={data.onClick}
-              className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border border-slate-200 hover:bg-slate-50 transition"
-            >
+            <button className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold border border-slate-200 hover:bg-slate-50 transition">
               View Details
             </button>
           )}
@@ -485,10 +533,10 @@ function looksLikeHtml(s) {
   return /<\/?[a-z][\s\S]*>/i.test(s);
 }
 
-// naive sanitizer for simple tags (keeps b, i, strong, em, a, p, br, ul, ol, li)
+// Naive sanitizer (keeps common formatting tags and sanitizes links)
 function safeHTML(html) {
   try {
-    const allowed = ["B", "I", "STRONG", "EM", "A", "P", "BR", "UL", "OL", "LI"];
+    const allowed = ["B","I","STRONG","EM","A","P","BR","UL","OL","LI","H1","H2","H3","H4","H5","H6"];
     const div = document.createElement("div");
     div.innerHTML = html;
 
@@ -497,17 +545,99 @@ function safeHTML(html) {
     while (walker.nextNode()) {
       const node = walker.currentNode;
       if (!allowed.includes(node.nodeName)) {
-        toRemove.push(node);
+        // if node is harmless wrapper, promote children, else mark for removal
+        if (node.nodeName === "SPAN" || node.nodeName === "DIV") {
+          // keep structure but still remove event handlers/attributes below
+        } else {
+          toRemove.push(node);
+        }
       } else if (node.nodeName === "A") {
         node.setAttribute("target", "_blank");
         node.setAttribute("rel", "noopener noreferrer");
         const href = node.getAttribute("href") || "";
         if (!/^https?:\/\//i.test(href)) node.setAttribute("href", "#");
       }
+      // strip potentially dangerous attributes
+      Array.from(node.attributes || []).forEach(attr => {
+        const name = attr.name.toLowerCase();
+        if (name.startsWith("on") || name === "style" || name === "srcdoc") node.removeAttribute(attr.name);
+      });
     }
-    toRemove.forEach((n) => n.replaceWith(...n.childNodes));
+    toRemove.forEach(n => n.replaceWith(...n.childNodes));
     return div.innerHTML;
   } catch {
     return String(html || "");
   }
+}
+
+function safeParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+function mapEventFields(e) {
+  return {
+    id: e.id ?? e.ID ?? e.event_id ?? e._id,
+    title: e.title ?? e.name ?? "",
+    date: e.event_date ?? e.date ?? e.created_at ?? e.createdAt,
+    host: e.hosted_by ?? e.host ?? e.hostedBy ?? e.organizer,
+    meetingLink: e.link ?? e.meeting_link ?? e.recordingLink ?? null,
+    thumbnailUrl: getThumbnailUrl(e),
+    description: e.description ?? e.desc ?? e.summary ?? "",
+    images_count: e.images_count ?? e.imagesCount ?? 0,
+    // keep raw payload for potential debugging
+    raw: e,
+  };
+}
+
+function getThumbnailUrl(e) {
+  // prefer direct image URL fields if present, else return null (caller will use gallery[0])
+  if (!e) return null;
+  if (typeof e.thumbnailUrl === "string" && e.thumbnailUrl) return e.thumbnailUrl;
+  if (typeof e.image === "string" && e.image) return e.image;
+  return null;
+}
+
+function buildBlobUrl(apiBase, type, imageId) {
+  if (!imageId) return null;
+  // type is likely "events" in your routes, so /api/events/image/:imageId/blob
+  return `${apiBase}/${type}/image/${encodeURIComponent(imageId)}/blob`;
+}
+
+function extractImageUrlsFromEntry(entry, apiBase, type) {
+  // entry may include images array or cover_image_id or direct URLs
+  if (!entry) return [];
+  // if images array present
+  const imgs = entry.images ?? entry.image_list ?? entry.photos ?? entry.photos_list;
+  if (Array.isArray(imgs) && imgs.length > 0) {
+    return resolveImageArray(imgs, apiBase, type);
+  }
+  // if cover id present
+  const cid = entry.cover_image_id ?? entry.coverImageId ?? null;
+  if (cid) return [buildBlobUrl(apiBase, type, cid)];
+  // if direct url field
+  if (entry.cover_image_url || entry.image_url || entry.thumbnail) {
+    return [entry.cover_image_url || entry.image_url || entry.thumbnail];
+  }
+  return [];
+}
+
+function resolveImageArray(arr, apiBase, type) {
+  if (!arr || !Array.isArray(arr)) return [];
+  return arr
+    .map((it) => {
+      if (!it) return null;
+      // if item is string url
+      if (typeof it === "string") return it;
+      // if item is object with id
+      const id = it.id ?? it.ID ?? it.imageId ?? it.image_id;
+      if (id) return buildBlobUrl(apiBase, type, id);
+      // if object has direct url property
+      if (it.url || it.image_url || it.path) return it.url || it.image_url || it.path;
+      return null;
+    })
+    .filter(Boolean);
 }
