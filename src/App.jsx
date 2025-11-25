@@ -11,11 +11,13 @@ import Blogpage from './Pages/Blogpage';
 import ScrollToTop from './Components/ScrollToTop';
 import BlogDetailPage from './Components/Blog/BlogDetailPage';
 import Eventsdetail from './Pages/Eventsdetail';
+import EventPop from './Components/EventPop/EventPop';
 
 const App = () => {
   return (
     <Router>
       <ScrollToTop />
+      <EventPop />
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/about" element={<Aboutpage />} />
