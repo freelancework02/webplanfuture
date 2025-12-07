@@ -1,5 +1,7 @@
 // HeroSection.jsx
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+
 import {
   Mail,
   Phone,
@@ -139,14 +141,14 @@ const HeroSection = ({ topOffset = 88 }) => {
               Book a Consultation
             </button>
 
-            <a
-              href="/service"
-              className="text-lg font-semibold py-4 px-7 rounded-xl border border-white/25 bg-white/10 backdrop-blur hover:bg-white/15 transition inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-              aria-label="Explore our services"
-            >
-              Explore Services
-              <ArrowRight className="w-5 h-5" aria-hidden="true" />
-            </a>
+            <Link
+  to="/service"
+  className="text-lg font-semibold py-4 px-7 rounded-xl border border-white/25 bg-white/10 backdrop-blur hover:bg-white/15 transition inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+  aria-label="Explore our services"
+>
+  Explore Services
+  <ArrowRight className="w-5 h-5" aria-hidden="true" />
+</Link>
           </div>
 
           {/* Benefits */}
