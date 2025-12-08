@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Mail, Phone, Calendar, ShieldCheck, MapPin } from "lucide-react";
-import emailjs from "emailjs-com";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ContactSection = () => {
+  // This is the email address that will receive the contact form data
+  const RECEIVER_EMAIL = "Jack@weplanfuture.com"; // or contactform@weplanfuture.com if you prefer
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,54 +48,57 @@ const ContactSection = () => {
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  // Send to backend API instead of EmailJS
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
-    // These match your EmailJS template fields
-    const templateParams = {
-      from_name: formData.name,
+    const payload = {
+      name: formData.name,
       email: formData.email,
-      message: formData.message,
-      time: new Date().toLocaleString(), // optional: fill {{time}}
+      msg: formData.message,
+      toEmail: RECEIVER_EMAIL, // 👈 receiver email included in payload
     };
 
-    emailjs
-      .send(
-        "service_o49f57q",      // ✅ updated service ID
-        "template_9g6np59",     // ✅ updated template ID
-        templateParams,
-        "_NCXgVXdplNNFVAvR"     // your public key
-      )
-      .then(
-        (response) => {
-          console.log("Email sent successfully:", response);
-          toast.success("🎉 Thanks! Your message has been sent.");
-          setFormData({ name: "", email: "", message: "", company: "" });
-          setErrors({});
-        },
-        (error) => {
-          console.error("Email sending failed:", error);
-          toast.error("❌ Could not send your message. Please try again.");
+    try {
+      const response = await fetch(
+        "https://weplanfuture.com/api/contact/contact",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         }
-      )
-      .finally(() => setIsSubmitting(false));
+      );
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success("🎉 Thanks! Your message has been sent.");
+        setFormData({ name: "", email: "", message: "", company: "" });
+        setErrors({});
+      } else {
+        toast.error(result.message || "❌ Could not send your message.");
+      }
+    } catch (error) {
+      toast.error("❌ Server error. Please try again later.");
+      console.error("API error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section
       className="relative overflow-hidden"
       style={{
-        // Professional cobalt-to-navy gradient with subtle bloom
         background:
           "radial-gradient(1200px 380px at 15% -10%, rgba(37,99,235,.22), transparent 55%), linear-gradient(135deg, #0f2a4a, #11355e 55%, #0b1f36)",
       }}
     >
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* Top angle + grid texture (decorative) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[.10]"
@@ -108,7 +113,6 @@ const ContactSection = () => {
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 pt-20 pb-16">
-        {/* Heading */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 backdrop-blur">
             <ShieldCheck size={16} className="text-white/90" />
@@ -125,9 +129,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        {/* Main grid */}
         <div className="grid md:grid-cols-2 gap-10 items-start">
-          {/* Form Card */}
           <div className="bg-white rounded-2xl shadow-[0_18px_40px_-18px_rgba(0,0,0,.45)] border border-white/80 p-6 md:p-8">
             <h3 className="text-xl md:text-2xl font-bold text-slate-900 text-center mb-1">
               Contact Us
@@ -142,7 +144,6 @@ const ContactSection = () => {
               noValidate
               aria-describedby="form-errors"
             >
-              {/* Honeypot (hidden) */}
               <input
                 type="text"
                 name="company"
@@ -153,6 +154,7 @@ const ContactSection = () => {
                 autoComplete="off"
               />
 
+              {/* NAME */}
               <div>
                 <label
                   htmlFor="name"
@@ -172,20 +174,13 @@ const ContactSection = () => {
                   }`}
                   value={formData.name}
                   onChange={handleChange}
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
                 />
                 {errors.name && (
-                  <p
-                    id="name-error"
-                    className="text-red-600 text-sm mt-1"
-                    role="alert"
-                  >
-                    {errors.name}
-                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errors.name}</p>
                 )}
               </div>
 
+              {/* EMAIL */}
               <div>
                 <label
                   htmlFor="email"
@@ -205,20 +200,13 @@ const ContactSection = () => {
                   }`}
                   value={formData.email}
                   onChange={handleChange}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {errors.email && (
-                  <p
-                    id="email-error"
-                    className="text-red-600 text-sm mt-1"
-                    role="alert"
-                  >
-                    {errors.email}
-                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errors.email}</p>
                 )}
               </div>
 
+              {/* MESSAGE */}
               <div>
                 <label
                   htmlFor="message"
@@ -237,20 +225,13 @@ const ContactSection = () => {
                   }`}
                   value={formData.message}
                   onChange={handleChange}
-                  aria-invalid={!!errors.message}
-                  aria-describedby={errors.message ? "message-error" : undefined}
                 />
                 {errors.message && (
-                  <p
-                    id="message-error"
-                    className="text-red-600 text-sm mt-1"
-                    role="alert"
-                  >
-                    {errors.message}
-                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errors.message}</p>
                 )}
               </div>
 
+              {/* SUBMIT */}
               <button
                 type="submit"
                 className={`w-full py-3 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
@@ -259,7 +240,6 @@ const ContactSection = () => {
                     : "bg-gradient-to-br from-[#2563eb] to-[#1e40af] hover:translate-y-[-1px]"
                 }`}
                 disabled={isSubmitting}
-                aria-busy={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
@@ -274,14 +254,13 @@ const ContactSection = () => {
               <p
                 id="form-errors"
                 className="text-xs text-slate-500 text-center"
-                aria-live="polite"
               >
                 We respect your privacy. We’ll never share your details.
               </p>
             </form>
           </div>
 
-          {/* Contact Options / Business Info */}
+          {/* RIGHT SECTION – unchanged */}
           <div className="space-y-6 text-center md:text-left">
             <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur p-6 text-white">
               <p className="text-lg font-medium mb-3">
@@ -328,25 +307,17 @@ const ContactSection = () => {
             </div>
 
             <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur p-6 text-white">
-              <h4 className="text-xl font-semibold mb-1">
-                We Plan future
-              </h4>
+              <h4 className="text-xl font-semibold mb-1">We Plan future</h4>
               <p className="text-white/90">📞 781-333-8353</p>
               <p className="text-white/90">📧 Jack@weplanfuture.com</p>
               <div className="flex items-center gap-2 mt-2 text-white/80">
                 <MapPin size={18} />
                 <span>Virtual consultations & by-appointment sessions</span>
               </div>
-              {/* <div className="mt-4">
-                <h5 className="font-semibold text-white">Business Hours</h5>
-                <p className="text-white/90">Mon–Fri: 6 PM – 9 PM</p>
-                <p className="text-white/90">Sat–Sun: By Appointment (1 PM – 4 PM)</p>
-              </div> */}
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div className="mt-14 text-center text-white/80 text-sm border-t border-white/20 pt-6">
           © {new Date().getFullYear()} We plan future. All Rights Reserved.
         </div>
